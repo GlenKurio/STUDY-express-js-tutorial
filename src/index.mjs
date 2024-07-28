@@ -29,6 +29,14 @@ app.post("/api/auth", passport.authenticate("local"), (req, res) => {
   res.sendStatus(200);
 });
 
+app.post("/api/auth/logout", (req, res) => {
+  if (!req.user) return res.sendStatus(401);
+  req.logout((err) => {
+    if (err) return res.sendStatus(500);
+    return res.sendStatus(200);
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log("Server is running on port 3000"));
