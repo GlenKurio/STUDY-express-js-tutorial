@@ -8,8 +8,15 @@ import { mockUsers } from "../../utils/constants.mjs";
 import resolveIndexByUserId from "../../utils/middlewares.mjs";
 
 const router = Router();
-
-router.get("/api/users", checkSchema(getUsersValidationSchema), (req, res) => {
+// checkSchema(getUsersValidationSchema),
+router.get("/api/users", (req, res) => {
+  req.sessionStore.get(req.sessionID, (err, session) => {
+    if (err) {
+      console.log(err);
+      throw err;
+    }
+    console.log(sessionData);
+  });
   const result = validationResult(req);
   if (!result.isEmpty()) {
     return res.status(400).send(result.array());
