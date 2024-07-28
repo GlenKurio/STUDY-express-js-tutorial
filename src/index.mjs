@@ -1,5 +1,12 @@
 import express from "express";
-
+import {
+  query,
+  validationResult,
+  body,
+  matchedData,
+  checkSchema,
+} from "express-validator";
+import { createUserValidationSchema } from "../utils/validationSchemas.mjs";
 const app = express();
 
 app.use(express.json());
@@ -52,24 +59,44 @@ app.get("/", loggingMiddleware, (req, res) => {
   res.status(200).send("<h1>Hello World</h1>");
 });
 
-app.get("/api/users", (req, res) => {
-  const {
-    query: { filter, value },
-  } = req;
+app.get(
+  "/api/users",
+  query("filter")
+    .isString()
+    .notEmpty()
+    .withMessage("Filter is required")
+    .isLength({ min: 3, max: 10 })
+    .withMessage("Must be at least 3 and at most 10 characters long"),
+  (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).send(result.array());
+    }
+    const {
+      query: { filter, value },
+    } = req;
 
-  if (filter && value) {
-    return res.send(
-      mockUsers.filter((u) =>
-        u[filter].includes(value.split("")[0].toUpperCase() + value.slice(1))
-      )
-    );
+    if (filter && value) {
+      return res.send(
+        mockUsers.filter((u) =>
+          u[filter].includes(value.split("")[0].toUpperCase() + value.slice(1))
+        )
+      );
+    }
+
+    return res.send(mockUsers);
+  }
+);
+
+app.post("/api/users", checkSchema(createUserValidationSchema), (req, res) => {
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    return res.status(400).send(result.array());
   }
 
-  return res.send(mockUsers);
-});
+  const data = matchedData(req);
 
-app.post("/api/users", (req, res) => {
-  const { name, username } = req.body;
+  const { name, username } = data;
   if (!name || !username) {
     return res.status(400).send("Name and username are required");
   }
