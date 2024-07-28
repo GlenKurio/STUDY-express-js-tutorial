@@ -1,6 +1,6 @@
 export const createUserValidationSchema = {
   username: {
-    isLenght: {
+    isLength: {
       options: { min: 3, max: 10 },
       errorMessage: "Must be at least 3 and at most 10 characters long",
     },
@@ -17,6 +17,21 @@ export const createUserValidationSchema = {
     },
     isString: {
       errorMessage: "Display name must be a string",
+    },
+  },
+};
+
+export const getUsersValidationSchema = {
+  filter: {
+    notEmpty: {
+      errorMessage: "Filter is required",
+    },
+    isString: {
+      errorMessage: "Filter must be a string",
+    },
+    isLength: {
+      options: { min: 3, max: 10 },
+      errorMessage: "Must be at least 3 and at most 10 characters long",
     },
   },
 };
