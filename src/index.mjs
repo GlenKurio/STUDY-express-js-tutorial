@@ -6,9 +6,19 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import { mockUsers } from "../utils/constants.mjs";
 import passport from "passport";
+import mongoose from "mongoose";
 import "./strategies/local-strategy.mjs";
 
 const app = express();
+
+mongoose
+  .connect("")
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 app.use(express.json());
 app.use(cookieParser("holaworlda"));

@@ -1,11 +1,8 @@
 import { Router } from "express";
-import { checkSchema, matchedData, validationResult } from "express-validator";
-import {
-  createUserValidationSchema,
-  getUsersValidationSchema,
-} from "../../utils/validationSchemas.mjs";
+import { validationResult } from "express-validator";
 import { mockUsers } from "../../utils/constants.mjs";
 import resolveIndexByUserId from "../../utils/middlewares.mjs";
+import { User } from "../schemas/user.mjs";
 
 const router = Router();
 // checkSchema(getUsersValidationSchema),
@@ -36,30 +33,17 @@ router.get("/api/users", (req, res) => {
   return res.send(mockUsers);
 });
 
-router.post(
-  "/api/users",
-  checkSchema(createUserValidationSchema),
-  (req, res) => {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-      return res.status(400).send(result.array());
-    }
+router.post("/api/users", async (req, res) => {
+  const { body } = req;
+  const newUser = new User(body);
+  try {
+    const savedUser = await newUser.save();
 
-    const data = matchedData(req);
-
-    const { name, username } = data;
-    if (!name || !username) {
-      return res.status(400).send("Name and username are required");
-    }
-    const newUser = {
-      id: mockUsers.length + 1,
-      name,
-      username,
-    };
-    mockUsers.push(newUser);
-    return res.status(201).send(mockUsers);
+    return res.status(201).send(savedUser);
+  } catch (error) {
+    return res.status(500).send(error);
   }
-);
+});
 
 router.get("/api/users/:id", (req, res) => {
   const { id } = req.params;
