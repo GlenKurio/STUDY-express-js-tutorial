@@ -7,6 +7,7 @@ import session from "express-session";
 import { mockUsers } from "../utils/constants.mjs";
 import passport from "passport";
 import mongoose from "mongoose";
+import MongoStore from 'connect-mongo'
 import "./strategies/local-strategy.mjs";
 
 const app = express();
@@ -26,8 +27,11 @@ app.use(
   session({
     secret: "secret word for cookies",
     saveUninitialized: false, //do not save empty sessions
-    resave: false,
+    resave: false, // reasve session when modified instead of creating a new record in db
     cookie: { maxAge: 60000 * 60 * 24 * 14 },
+    store: MongoStore.create({
+      client: mongoose.connection.getClient(),
+    })
   })
 );
 app.use(passport.initialize());
