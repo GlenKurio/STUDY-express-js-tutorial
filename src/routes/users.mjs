@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import { mockUsers } from "../../utils/constants.mjs";
 import resolveIndexByUserId from "../../utils/middlewares.mjs";
 import { User } from "../schemas/user.mjs";
+import { hashPassword } from "../../utils/helpers.mjs";
 
 const router = Router();
 // checkSchema(getUsersValidationSchema),
@@ -35,11 +36,17 @@ router.get("/api/users", (req, res) => {
 
 router.post("/api/users", async (req, res) => {
   const { body } = req;
-  const newUser = new User(body);
+  const hashedPassword = hashPassword(body.password);
+  const newUser = new User({
+    name: body.name,
+    username: body.username,
+    password: hashedPassword,
+  });
   try {
     const savedUser = await newUser.save();
 
     return res.status(201).send(savedUser);
+    
   } catch (error) {
     return res.status(500).send(error);
   }

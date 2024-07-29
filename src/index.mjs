@@ -12,7 +12,7 @@ import "./strategies/local-strategy.mjs";
 const app = express();
 
 mongoose
-  .connect("")
+  .connect("mongodb+srv://glebkurip:aNvLBUBx6Vx5izID@cluster0.vubrnmr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
   .then(() => {
     console.log("Connected to MongoDB");
   })
