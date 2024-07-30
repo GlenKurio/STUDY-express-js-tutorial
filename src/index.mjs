@@ -43,6 +43,10 @@ app.post("/api/auth", passport.authenticate("local"), (req, res) => {
   res.sendStatus(200);
 });
 
+app.get("/api/auth/discord/redirect", passport.authenticate("discord"), (req, res) => {
+  res.sendStatus(200);
+});
+
 app.post("/api/auth/logout", (req, res) => {
   if (!req.user) return res.sendStatus(401);
   req.logout((err) => {
