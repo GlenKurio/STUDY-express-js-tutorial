@@ -27,7 +27,7 @@ app.use(
   session({
     secret: "secret word for cookies",
     saveUninitialized: false, //do not save empty sessions
-    resave: false, // reasve session when modified instead of creating a new record in db
+    resave: true, // resave session when it's modified instead of creating a new record in db on each request
     cookie: { maxAge: 60000 * 60 * 24 * 14 },
     store: MongoStore.create({
       client: mongoose.connection.getClient(),
